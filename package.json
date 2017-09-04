@@ -1,0 +1,19 @@
+{
+  "name": "beaker-virtual-fs",
+  "version": "1.0.0",
+  "description": "An object-oriented files interface used by Beaker to render the user's filesystem",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard *.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beakerbrowser/beaker-virtual-fs.git"
+  },
+  "author": "Paul Frazee <pfrazee@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/beakerbrowser/beaker-virtual-fs/issues"
+  },
+  "homepage": "https://github.com/beakerbrowser/beaker-virtual-fs#readme"
+}
