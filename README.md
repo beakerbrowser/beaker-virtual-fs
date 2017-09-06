@@ -27,10 +27,15 @@ const {
   FSNode, // root interface for all objects, should be subclassed
   FSContainer, // root interface for all folder-like objects, should be subclassed
 
-  FSVirtualRoot, // the root of the FS; contains the virtual folders below
-  FSVirtualFolder_Library, // contains all of the archives created by the user
-  FSVirtualFolder_Friends, // contains all of the users followed by the user
-  FSVirtualFolder_Trash, // contains all of the archives deleted by the user
+  FSVirtualRoot, // the root of the FS
+  FSVirtualFolder, // a base class for virtually-defined folders
+  FSVirtualFolderWithTypes, // a base class for virtually-defined folders that have type-filters as their children
+  FSVirtualFolder_TypeFilter, // the children of FSVirtualFolderWithTypes, applies a type filter to its parent's children
+  FSVirtualFolder_User, // contains a single user's folders
+  FSVirtualFolder_Network, // contains network folders
+  FSVirtualFolder_Saved, // contains the local user's saved archives
+  FSVirtualFolder_Rehosting, // contains the local user's rehosted archives
+  FSVirtualFolder_Trash, // contains the local user's deleted archives
   
   FSArchiveContainer, // root interface for all folder-like archive objects, should be subclassed
   FSArchive, // an archive
