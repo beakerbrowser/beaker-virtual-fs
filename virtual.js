@@ -80,8 +80,9 @@ class FSVirtualFolder_TypeFilter extends FSVirtualFolder {
 
   async readChildren () {
     if (this._type) {
-      // TODO apply filter
-      return  []
+      return this._sourceSet.filter(child => (
+        child._archiveInfo.type.includes(this._type)
+      ))
     }
     // no filter
     return this._sourceSet
