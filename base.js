@@ -5,7 +5,8 @@ class FSNode {
   get size () { return 0 }
   get mtime () { return 0 }
   get isContainer () { return false } // is folder-like?
-  get isEmpty () { return true } // has children?
+  get isEmpty () { return true }
+  get hasChildren () { return !this.isEmpty }
   get children () { return [] }
 
   // load any data needed to display the node in the sidebar or in the expanded state
