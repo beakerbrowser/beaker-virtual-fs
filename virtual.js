@@ -36,6 +36,7 @@ class FSVirtualRoot extends FSVirtualFolder {
   async readChildren () {
     // read user profile
     var profile = await beaker.profiles.getCurrentProfile()
+    profile.isCurrentUser = true
 
     // generate children
     return [
@@ -99,8 +100,19 @@ class FSVirtualFolder_User extends FSVirtualFolderWithTypes {
 
   async readChildren () {
     // read source set of archives
-    // TODO read archives of user other than local
-    const archives = await beaker.archives.list({isSaved: true, isOwner: true})
+    var archives
+    if (this._profile.isCurrentUser) {
+      archives = await beaker.archives.list({isSaved: true, isOwner: true})
+    } else {
+      // fetch their published archives
+      archives = await beaker.archives.listPublished({author: this._profile._origin})
+      // remove their profile archive if its in there (we want the direct source)
+      archives = archives.filter(a => a.url !== this._profile._origin)
+      // now add their profile archive to the front
+      let profileArchive = new DatArchive(this._profile._origin)
+      let profileArchiveInfo = await profileArchive.getInfo()
+      archives.unshift(profileArchiveInfo)
+    }
     const sourceSet = archives.map(a => new FSArchive(a))
     return this.createTypeChildren(sourceSet)
   }
