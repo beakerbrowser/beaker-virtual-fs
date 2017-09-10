@@ -133,6 +133,7 @@ class FSVirtualFolder_Network extends FSVirtualFolder {
     return [
       new FSVirtualFolder_Saved(),
       new FSVirtualFolder_Rehosting(),
+      new FSVirtualFolder_Other(),
       ...followedFolders
     ]
   }
@@ -146,8 +147,8 @@ class FSVirtualFolder_Saved extends FSVirtualFolderWithTypes {
   get name () { return 'Saved' }
 
   async readChildren () {
-    const deletedArchives = await beaker.archives.list({isSaved: true, isOwner: false})
-    const sourceSet = deletedArchives.map(a => new FSArchive(a))
+    const archives = await beaker.archives.list({isSaved: true, isOwner: false})
+    const sourceSet = archives.map(a => new FSArchive(a))
     return this.createTypeChildren(sourceSet)
   }
 }
@@ -156,9 +157,27 @@ class FSVirtualFolder_Rehosting extends FSVirtualFolderWithTypes {
   get name () { return 'Rehosting' }
 
   async readChildren () {
-    const deletedArchives = await beaker.archives.list({isSaved: true, isOwner: false, networked: true})
-    const sourceSet = deletedArchives.map(a => new FSArchive(a))
+    const archives = await beaker.archives.list({isSaved: true, isOwner: false, networked: true})
+    const sourceSet = archives.map(a => new FSArchive(a))
     return this.createTypeChildren(sourceSet)
+  }
+}
+
+class FSVirtualFolder_Other extends FSVirtualFolderWithTypes {
+  get name () { return 'Other' }
+
+  async readChildren () {
+    return this.createTypeChildren([])
+  }
+
+  // special helper
+  // this folder has archives added arbitrarily on user access
+  // so we need this method to add the archive
+  addArchive (archiveInfo) {
+    // all children share a sourceSet
+    // so just add to one of them
+    const archive = new FSArchive(archiveInfo)
+    this._children[0]._sourceSet.push(archive)
   }
 }
 
@@ -166,8 +185,8 @@ class FSVirtualFolder_Trash extends FSVirtualFolderWithTypes {
   get name () { return 'Trash' }
 
   async readChildren () {
-    const deletedArchives = await beaker.archives.list({isSaved: false})
-    const sourceSet = deletedArchives.map(a => new FSArchive(a))
+    const archives = await beaker.archives.list({isSaved: false})
+    const sourceSet = archives.map(a => new FSArchive(a))
     return this.createTypeChildren(sourceSet)
   }
 }
@@ -181,5 +200,6 @@ module.exports = {
   FSVirtualFolder_Network,
   FSVirtualFolder_Saved,
   FSVirtualFolder_Rehosting,
+  FSVirtualFolder_Other,
   FSVirtualFolder_Trash
 }
