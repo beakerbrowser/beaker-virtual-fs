@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/beakerbrowser/beaker-virtual-fs/issues"
   },
-  "homepage": "https://github.com/beakerbrowser/beaker-virtual-fs#readme"
+  "homepage": "https://github.com/beakerbrowser/beaker-virtual-fs#readme",
+  "dependencies": {
+    "text-extensions": "^1.6.0"
+  }
 }

@@ -1,6 +1,7 @@
 /* globals DatArchive */
 
 const {FSNode, FSContainer} = require('./base')
+const TEXTUAL_FILE_FORMATS = require('text-extensions')
 
 class FSArchiveContainer extends FSContainer {
   constructor (archiveInfo) {
@@ -66,6 +67,7 @@ class FSArchiveFile extends FSNode {
     this._name = name
     this._path = path
     this._stat = stat
+    this.preview = null
   }
 
   get url () { return this._archiveInfo.url + this._path }
@@ -73,6 +75,33 @@ class FSArchiveFile extends FSNode {
   get name () { return (this._name || '').trim() || 'Untitled' }
   get size () { return this._stat.size }
   get mtime () { return this._stat.mtime }
+
+  async readData () {
+    if (this.preview) {
+      return
+    }
+
+    // load a preview if this file type is (probably) textual
+    var ext = this.name.split('.').pop()
+    if (!ext) {
+      return
+    }
+    ext = ext.toLowerCase()
+    if (!TEXTUAL_FILE_FORMATS.includes(ext)) {
+      return
+    }
+
+    // read the file and save the first 500 bytes
+    try {
+      var fileData = await this._archive.readFile(this._path, 'utf8')
+      if (fileData.length > 500) {
+        fileData = fileData.slice(0, 500) + '...'
+      }
+      this.preview = fileData
+    } catch (e) {
+      console.log('Failed to load preview', e, this)
+    }
+  }
 }
 
 module.exports = {FSArchiveContainer, FSArchive, FSArchiveFolder, FSArchiveFile}
