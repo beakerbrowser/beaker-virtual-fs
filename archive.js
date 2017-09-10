@@ -14,6 +14,7 @@ class FSArchiveContainer extends FSContainer {
 
   get isEmpty () { return this._files.length === 0 }
   get children () { return this._files }
+  get isEditable () { return this._archiveInfo.isOwner }
 
   async readData () {
     // load all children
@@ -42,6 +43,8 @@ class FSArchive extends FSArchiveContainer {
   get url () { return this._archiveInfo.url }
   get type () { return 'archive' }
   get name () { return (this._archiveInfo.title || '').trim() || 'Untitled' }
+  get size () { return this._archiveInfo.size }
+  get mtime () { return this._archiveInfo.mtime }
 }
 
 class FSArchiveFolder extends FSArchiveContainer {
@@ -56,6 +59,8 @@ class FSArchiveFolder extends FSArchiveContainer {
   get url () { return this._archiveInfo.url + this._path }
   get type () { return 'folder' }
   get name () { return (this._name || '').trim() || 'Untitled' }
+  get size () { return this._stat.size }
+  get mtime () { return this._stat.mtime }
 
 }
 
@@ -75,6 +80,7 @@ class FSArchiveFile extends FSNode {
   get name () { return (this._name || '').trim() || 'Untitled' }
   get size () { return this._stat.size }
   get mtime () { return this._stat.mtime }
+  get isEditable () { return this._archiveInfo.isOwner }
 
   async readData () {
     if (this.preview) {

@@ -4,6 +4,7 @@ class FSNode {
   get name () { return '' }
   get size () { return 0 }
   get mtime () { return 0 }
+  get isEditable () { return false }
   get isContainer () { return false } // is folder-like?
   get isEmpty () { return true }
   get hasChildren () { return !this.isEmpty }
