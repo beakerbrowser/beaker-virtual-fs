@@ -2,6 +2,7 @@
 
 const {FSNode, FSContainer} = require('./base')
 const TEXTUAL_FILE_FORMATS = require('text-extensions')
+TEXTUAL_FILE_FORMATS.push('datignore')
 
 class FSArchiveContainer extends FSContainer {
   constructor (archiveInfo) {
