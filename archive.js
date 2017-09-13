@@ -66,6 +66,10 @@ class FSArchiveFolder extends FSArchiveContainer {
   async rename (newName) {
     return rename(this, newName)
   }
+
+  async delete () {
+    await this._archive.rmdir(this._path, {recursive: true})
+  }
 }
 
 class FSArchiveFile extends FSNode {
@@ -115,6 +119,10 @@ class FSArchiveFile extends FSNode {
 
   async rename (newName) {
     return rename(this, newName)
+  }
+
+  async delete () {
+    await this._archive.unlink(this._path)
   }
 }
 

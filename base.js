@@ -15,6 +15,7 @@ class FSNode {
 
   // mutators
   async rename (newName) {}
+  async delete () {}
 }
 
 class FSContainer extends FSNode {
