@@ -126,10 +126,32 @@ class FSArchiveFile extends FSNode {
   }
 }
 
+class FSArchiveFolder_BeingCreated extends FSContainer {
+  constructor (archiveInfo, archive, parentPath) {
+    super()
+    this._archiveInfo = archiveInfo
+    this._archive = archive
+    this._parentPath = parentPath
+  }
+
+  get url () { return this._archiveInfo.url + this._parentPath }
+  get type () { return 'folder' }
+  get name () { return 'New folder' }
+  get size () { return 0 }
+  get mtime () { return 0 }
+  get isEmpty () { return true }
+  get children () { return [] }
+  get isEditable () { return true }
+
+  async rename (newName) {
+    return this._archive.mkdir(this._parentPath + '/' + newName)
+  }
+}
+
 async function rename (node, newName) {
   var oldpath = node._path
   var newpath = node._path.split('/').slice(0, -1).join('/') + '/' + newName
   await node._archive.rename(oldpath, newpath)
 }
 
-module.exports = {FSArchiveContainer, FSArchive, FSArchiveFolder, FSArchiveFile}
+module.exports = {FSArchiveContainer, FSArchive, FSArchiveFolder, FSArchiveFile, FSArchiveFolder_BeingCreated}

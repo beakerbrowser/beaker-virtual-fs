@@ -47,7 +47,8 @@ const {
   FSArchiveContainer, // root interface for all folder-like archive objects, should be subclassed
   FSArchive, // an archive
   FSArchiveFolder, // a folder within an archive
-  FSArchiveFile // a file within an archive
+  FSArchiveFile, // a file within an archive
+  FSArchiveFolder_BeingCreated // a temporary virtual folder that's in the process of having a name chosen
 } = require('beaker-virtual-fs')
 ```
 
