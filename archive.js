@@ -63,6 +63,9 @@ class FSArchiveFolder extends FSArchiveContainer {
   get size () { return this._stat.size }
   get mtime () { return this._stat.mtime }
 
+  async rename (newName) {
+    return rename(this, newName)
+  }
 }
 
 class FSArchiveFile extends FSNode {
@@ -109,6 +112,16 @@ class FSArchiveFile extends FSNode {
       console.log('Failed to load preview', e, this)
     }
   }
+
+  async rename (newName) {
+    return rename(this, newName)
+  }
+}
+
+async function rename (node, newName) {
+  var oldpath = node._path
+  var newpath = node._path.split('/').slice(0, -1).join('/') + '/' + newName
+  await node._archive.rename(oldpath, newpath)
 }
 
 module.exports = {FSArchiveContainer, FSArchive, FSArchiveFolder, FSArchiveFile}

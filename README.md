@@ -19,6 +19,9 @@ class FSNode {
 
   // load any data needed to display the node in the sidebar or in the expanded state
   async readData () {}
+
+  // mutators
+  async rename (newName) {}
 }
 ```
 
