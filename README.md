@@ -39,9 +39,6 @@ const {
   FSVirtualFolder_TypeFilter, // the children of FSVirtualFolderWithTypes, applies a type filter to its parent's children
   FSVirtualFolder_User, // contains a single user's folders
   FSVirtualFolder_Network, // contains network folders
-  FSVirtualFolder_Saved, // contains the local user's saved archives
-  FSVirtualFolder_Rehosting, // contains the local user's rehosted archives
-  FSVirtualFolder_Other, // contains arbitrarily-opened archives (the fallback)
   FSVirtualFolder_Trash, // contains the local user's deleted archives
   
   FSArchiveContainer, // root interface for all folder-like archive objects, should be subclassed

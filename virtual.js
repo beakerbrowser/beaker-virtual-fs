@@ -35,13 +35,18 @@ class FSVirtualRoot extends FSVirtualFolder {
 
   async readChildren () {
     // read user profile
-    var profile = await beaker.profiles.getCurrentProfile()
+    const profile = await beaker.profiles.getCurrentProfile()
     profile.isCurrentUser = true
+
+    // read followed profiles
+    const followedProfiles = await Promise.all((profile.followUrls || []).map(beaker.profiles.getProfile))
+    const followedFolders = followedProfiles.map(p => new FSVirtualFolder_User(p))
 
     // generate children
     return [
       new FSVirtualFolder_User(profile),
       new FSVirtualFolder_Network(),
+      ...followedFolders,
       new FSVirtualFolder_Trash()
     ]
   }
@@ -118,56 +123,13 @@ class FSVirtualFolder_User extends FSVirtualFolderWithTypes {
   }
 }
 
-class FSVirtualFolder_Network extends FSVirtualFolder {
+class FSVirtualFolder_Network extends FSVirtualFolderWithTypes {
   get name () { return 'Network' }
-
-  async readChildren () {
-    // read user profile
-    const profile = await beaker.profiles.getCurrentProfile()
-
-    // read followed profiles
-    const followedProfiles = await Promise.all((profile.followUrls || []).map(beaker.profiles.getProfile))
-    const followedFolders = followedProfiles.map(p => new FSVirtualFolder_User(p))
-
-    // generate children
-    return [
-      new FSVirtualFolder_Saved(),
-      new FSVirtualFolder_Rehosting(),
-      new FSVirtualFolder_Other(),
-      ...followedFolders
-    ]
-  }
-
-  sortChildren () {
-    // dont sort
-  }
-}
-
-class FSVirtualFolder_Saved extends FSVirtualFolderWithTypes {
-  get name () { return 'Saved' }
 
   async readChildren () {
     const archives = await beaker.archives.list({isSaved: true, isOwner: false})
     const sourceSet = archives.map(a => new FSArchive(a))
     return this.createTypeChildren(sourceSet)
-  }
-}
-
-class FSVirtualFolder_Rehosting extends FSVirtualFolderWithTypes {
-  get name () { return 'Rehosting' }
-
-  async readChildren () {
-    const archives = await beaker.archives.list({isSaved: true, isOwner: false, networked: true})
-    const sourceSet = archives.map(a => new FSArchive(a))
-    return this.createTypeChildren(sourceSet)
-  }
-}
-
-class FSVirtualFolder_Other extends FSVirtualFolderWithTypes {
-  get name () { return 'Other' }
-
-  async readChildren () {
-    return this.createTypeChildren([])
   }
 
   // special helper
@@ -176,8 +138,15 @@ class FSVirtualFolder_Other extends FSVirtualFolderWithTypes {
   addArchive (archiveInfo) {
     // all children share a sourceSet
     // so just add to one of them
-    const archive = new FSArchive(archiveInfo)
-    this._children[0]._sourceSet.push(archive)
+    const alreadyExists = !!this._children[0]._sourceSet.find(item => item._archiveInfo.url === archiveInfo.url)
+    if (!alreadyExists) {
+      const archive = new FSArchive(archiveInfo)
+      this._children[0]._sourceSet.push(archive)
+    }
+  }
+
+  sortChildren () {
+    // dont sort
   }
 }
 
@@ -198,8 +167,5 @@ module.exports = {
   FSVirtualFolder_TypeFilter,
   FSVirtualFolder_User,
   FSVirtualFolder_Network,
-  FSVirtualFolder_Saved,
-  FSVirtualFolder_Rehosting,
-  FSVirtualFolder_Other,
   FSVirtualFolder_Trash
 }
