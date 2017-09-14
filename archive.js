@@ -46,6 +46,10 @@ class FSArchive extends FSArchiveContainer {
   get name () { return (this._archiveInfo.title || '').trim() || 'Untitled' }
   get size () { return this._archiveInfo.size }
   get mtime () { return this._archiveInfo.mtime }
+  
+  async delete () {
+    return DatArchive.unlink(this._archive)
+  }
 }
 
 class FSArchiveFolder extends FSArchiveContainer {
