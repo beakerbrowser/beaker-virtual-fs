@@ -64,11 +64,11 @@ class FSVirtualFolderWithTypes extends FSVirtualFolder {
       new FSVirtualFolder_TypeFilter(sourceSet, 'Applications', 'application'),
       new FSVirtualFolder_TypeFilter(sourceSet, 'Code modules', 'module'),
       new FSVirtualFolder_TypeFilter(sourceSet, 'Datasets', 'dataset'),
-      new FSVirtualFolder_TypeFilter(sourceSet, 'Documents', 'document'),
+      new FSVirtualFolder_TypeFilter(sourceSet, 'Documents', 'documents'),
       new FSVirtualFolder_TypeFilter(sourceSet, 'Music', 'music'),
-      new FSVirtualFolder_TypeFilter(sourceSet, 'Photos', 'photo'),
+      new FSVirtualFolder_TypeFilter(sourceSet, 'Photos', 'photos'),
       new FSVirtualFolder_TypeFilter(sourceSet, 'User profiles', 'user-profile'),
-      new FSVirtualFolder_TypeFilter(sourceSet, 'Videos', 'video'),
+      new FSVirtualFolder_TypeFilter(sourceSet, 'Videos', 'videos'),
       new FSVirtualFolder_TypeFilter(sourceSet, 'Websites', 'website')
     ]
   }
