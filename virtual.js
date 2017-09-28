@@ -35,11 +35,11 @@ class FSVirtualRoot extends FSVirtualFolder {
 
   async readChildren () {
     // read user profile
-    const profile = await beaker.profiles.getCurrentProfile()
+    const profile = await beaker.profiles.getCurrentUserProfile()
     profile.isCurrentUser = true
 
     // read followed profiles
-    const followedProfiles = await Promise.all((profile.followUrls || []).map(beaker.profiles.getProfile))
+    const followedProfiles = await Promise.all((profile.followUrls || []).map(beaker.profiles.getUserProfile))
     const followedFolders = followedProfiles.map(p => new FSVirtualFolder_User(p))
 
     // generate children
