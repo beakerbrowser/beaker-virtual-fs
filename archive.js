@@ -71,6 +71,14 @@ class FSArchiveFolder extends FSArchiveContainer {
     return rename(this, newName)
   }
 
+  async copy (newPath) {
+    await this._archive.copy(this._path, newPath)
+  }
+
+  async move (newPath) {
+    await this._archive.rename(this._path, newPath)
+  }
+
   async delete () {
     await this._archive.rmdir(this._path, {recursive: true})
   }
@@ -123,6 +131,14 @@ class FSArchiveFile extends FSNode {
 
   async rename (newName) {
     return rename(this, newName)
+  }
+
+  async copy (newPath) {
+    await this._archive.copy(this._path, newPath)
+  }
+
+  async move (newPath) {
+    await this._archive.rename(this._path, newPath)
   }
 
   async delete () {

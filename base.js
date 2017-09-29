@@ -15,6 +15,8 @@ class FSNode {
 
   // mutators
   async rename (newName) {}
+  async copy (newPath) {}
+  async move (newPath) {}
   async delete () {}
 }
 
