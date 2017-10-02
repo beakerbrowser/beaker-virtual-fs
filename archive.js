@@ -1,6 +1,7 @@
 /* globals DatArchive */
 
 const {FSNode, FSContainer} = require('./base')
+const {diffUpdate} = require('./util')
 const TEXTUAL_FILE_FORMATS = require('text-extensions')
 TEXTUAL_FILE_FORMATS.push('datignore')
 
@@ -21,13 +22,14 @@ class FSArchiveContainer extends FSContainer {
     // load all children
     this._archive = this._archive || new DatArchive(this._archiveInfo.url)
     var fileInfos = await this._archive.readdir(this._path, {stat: true})
-    this._files = fileInfos.map(fileInfo => {
+    var newFiles = fileInfos.map(fileInfo => {
       const path = this._path + '/' + fileInfo.name
       if (fileInfo.stat.isDirectory()) {
         return new FSArchiveFolder(this._archiveInfo, this._archive, fileInfo.name, path, fileInfo.stat)
       }
       return new FSArchiveFile(this._archiveInfo, this._archive, fileInfo.name, path, fileInfo.stat)
     })
+    this._files = diffUpdate(this._files, newFiles)
 
     // sort
     this._files.sort((a, b) => {
@@ -37,6 +39,12 @@ class FSArchiveContainer extends FSContainer {
       // by name
       return a.name.localeCompare(b.name)
     })
+  }
+
+  copyDataFrom (node) {
+    this._archiveInfo = node._archiveInfo
+    this._archive = node._archive
+    this._path = node._path
   }
 }
 
@@ -66,6 +74,14 @@ class FSArchiveFolder extends FSArchiveContainer {
   get name () { return (this._name || '').trim() || 'Untitled' }
   get size () { return this._stat.size }
   get mtime () { return this._stat.mtime }
+
+  copyDataFrom (node) {
+    this._archiveInfo = node._archiveInfo
+    this._archive = node._archive
+    this._name = node._name
+    this._path = node._path
+    this._stat = node._stat
+  }
 
   async rename (newName) {
     return rename(this, newName)
@@ -129,6 +145,15 @@ class FSArchiveFile extends FSNode {
     }
   }
 
+  copyDataFrom (node) {
+    this._archiveInfo = node._archiveInfo
+    this._archive = node._archive
+    this._name = node._name
+    this._path = node._path
+    this._stat = node._stat
+    this.preview = node.preview || this.preview // preview may not be loaded yet so fallback to current
+  }
+
   async rename (newName) {
     return rename(this, newName)
   }
@@ -162,6 +187,12 @@ class FSArchiveFolder_BeingCreated extends FSContainer {
   get isEmpty () { return true }
   get children () { return [] }
   get isEditable () { return true }
+
+  copyDataFrom (node) {
+    this._archiveInfo = node._archiveInfo
+    this._archive = node._archive
+    this._parentPath = node._parentPath
+  }
 
   async rename (newName) {
     return this._archive.mkdir(this._parentPath + '/' + newName)

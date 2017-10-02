@@ -3,6 +3,7 @@
 const assert = require('assert')
 const {FSContainer} = require('./base')
 const {FSArchive} = require('./archive')
+const {diffUpdate} = require('./util')
 
 class FSVirtualFolder extends FSContainer {
   constructor () {
@@ -15,7 +16,9 @@ class FSVirtualFolder extends FSContainer {
   get children () { return this._children }
 
   async readData () {
-    this._children = await this.readChildren()
+    // fetch new children and update via diff
+    var newChildren = await this.readChildren()
+    this._children = diffUpdate(this._children, newChildren)
     this.sortChildren()
   }
 
@@ -65,6 +68,10 @@ class FSVirtualFolder_User extends FSVirtualFolder {
 
   get name () { return this._profile.name || 'Anonymous' }
   get url () { return 'virtual://user-' + this._profile._origin }
+
+  copyDataFrom (node) {
+    this._profile = node._profile
+  }
 
   async readChildren () {
     // read source set of archives
