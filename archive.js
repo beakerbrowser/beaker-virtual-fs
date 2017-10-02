@@ -5,6 +5,18 @@ const {diffUpdate} = require('./util')
 const TEXTUAL_FILE_FORMATS = require('text-extensions')
 TEXTUAL_FILE_FORMATS.push('datignore')
 
+const STANDARD_ARCHIVE_TYPES = [
+  'application',
+  'module',
+  'dataset',
+  'documents',
+  'music',
+  'photos',
+  'user-profile',
+  'videos',
+  'website'
+]
+
 class FSArchiveContainer extends FSContainer {
   constructor (archiveInfo) {
     super()
@@ -50,7 +62,12 @@ class FSArchiveContainer extends FSContainer {
 
 class FSArchive extends FSArchiveContainer {
   get url () { return this._archiveInfo.url }
-  get type () { return 'archive' }
+  get type () {
+    let type = this._archiveInfo && this._archiveInfo.type
+    if (!type || !type.length) return 'archive'
+    type = type.filter(f => STANDARD_ARCHIVE_TYPES.includes(f))
+    return type[0] || 'archive'
+  }
   get name () { return (this._archiveInfo.title || '').trim() || 'Untitled' }
   get size () { return this._archiveInfo.size }
   get mtime () { return this._archiveInfo.mtime }
