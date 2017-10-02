@@ -6,8 +6,9 @@ const {FSArchive} = require('./archive')
 const {diffUpdate, sortCompare} = require('./util')
 
 class FSVirtualFolder extends FSContainer {
-  constructor () {
+  constructor (parent) {
     super()
+    this.parent = parent
     this._children = []
   }
 
@@ -47,14 +48,14 @@ class FSVirtualRoot extends FSVirtualFolder {
 
     // read followed profiles
     const followedProfiles = await Promise.all((profile.followUrls || []).map(beaker.profiles.getUserProfile))
-    const followedFolders = followedProfiles.map(p => new FSVirtualFolder_User(p))
+    const followedFolders = followedProfiles.map(p => new FSVirtualFolder_User(this, p))
 
     // generate children
     return [
-      new FSVirtualFolder_User(profile),
-      new FSVirtualFolder_Network(),
+      new FSVirtualFolder_User(this, profile),
+      new FSVirtualFolder_Network(this),
       ...followedFolders,
-      new FSVirtualFolder_Trash()
+      new FSVirtualFolder_Trash(this)
     ]
   }
 
@@ -64,8 +65,9 @@ class FSVirtualRoot extends FSVirtualFolder {
 }
 
 class FSVirtualFolder_User extends FSVirtualFolder {
-  constructor (profile) {
+  constructor (parent, profile) {
     super()
+    this.parent = parent
     this._profile = profile
   }
 
@@ -91,7 +93,7 @@ class FSVirtualFolder_User extends FSVirtualFolder {
       let profileArchiveInfo = await profileArchive.getInfo()
       archives.unshift(profileArchiveInfo)
     }
-    return archives.map(a => new FSArchive(a))
+    return archives.map(a => new FSArchive(this, a))
   }
 }
 
@@ -101,7 +103,7 @@ class FSVirtualFolder_Network extends FSVirtualFolder {
 
   async readChildren () {
     const archives = await beaker.archives.list({isSaved: true, isOwner: false})
-    return archives.map(a => new FSArchive(a))
+    return archives.map(a => new FSArchive(this, a))
   }
 
   // special helper
@@ -112,7 +114,7 @@ class FSVirtualFolder_Network extends FSVirtualFolder {
     // so just add to one of them
     const alreadyExists = !!this._children[0]._sourceSet.find(item => item._archiveInfo.url === archiveInfo.url)
     if (!alreadyExists) {
-      const archive = new FSArchive(archiveInfo)
+      const archive = new FSArchive(this, archiveInfo)
       this._children[0]._sourceSet.push(archive)
     }
   }
@@ -128,7 +130,7 @@ class FSVirtualFolder_Trash extends FSVirtualFolder {
 
   async readChildren () {
     const archives = await beaker.archives.list({isSaved: false})
-    return archives.map(a => new FSArchive(a))
+    return archives.map(a => new FSArchive(this, a))
   }
 }
 

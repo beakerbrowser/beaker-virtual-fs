@@ -18,8 +18,9 @@ const STANDARD_ARCHIVE_TYPES = [
 ]
 
 class FSArchiveContainer extends FSContainer {
-  constructor (archiveInfo) {
+  constructor (parent, archiveInfo) {
     super()
+    this.parent = parent
     this._archiveInfo = archiveInfo
     this._archive = null
     this._path = ''
@@ -37,9 +38,9 @@ class FSArchiveContainer extends FSContainer {
     var newFiles = fileInfos.map(fileInfo => {
       const path = this._path + '/' + fileInfo.name
       if (fileInfo.stat.isDirectory()) {
-        return new FSArchiveFolder(this._archiveInfo, this._archive, fileInfo.name, path, fileInfo.stat)
+        return new FSArchiveFolder(this, this._archiveInfo, this._archive, fileInfo.name, path, fileInfo.stat)
       }
-      return new FSArchiveFile(this._archiveInfo, this._archive, fileInfo.name, path, fileInfo.stat)
+      return new FSArchiveFile(this, this._archiveInfo, this._archive, fileInfo.name, path, fileInfo.stat)
     })
     this._files = diffUpdate(this._files, newFiles)
   }
@@ -80,8 +81,8 @@ class FSArchive extends FSArchiveContainer {
 }
 
 class FSArchiveFolder extends FSArchiveContainer {
-  constructor (archiveInfo, archive, name, path, stat) {
-    super(archiveInfo)
+  constructor (parent, archiveInfo, archive, name, path, stat) {
+    super(parent, archiveInfo)
     this._archive = archive
     this._name = name
     this._path = path
@@ -120,8 +121,9 @@ class FSArchiveFolder extends FSArchiveContainer {
 }
 
 class FSArchiveFile extends FSNode {
-  constructor (archiveInfo, archive, name, path, stat) {
+  constructor (parent, archiveInfo, archive, name, path, stat) {
     super()
+    this.parent = parent
     this._archiveInfo = archiveInfo
     this._archive = archive
     this._name = name
@@ -191,8 +193,9 @@ class FSArchiveFile extends FSNode {
 }
 
 class FSArchiveFolder_BeingCreated extends FSContainer {
-  constructor (archiveInfo, archive, parentPath) {
+  constructor (parent, archiveInfo, archive, parentPath) {
     super()
+    this.parent = parent
     this._archiveInfo = archiveInfo
     this._archive = archive
     this._parentPath = parentPath
