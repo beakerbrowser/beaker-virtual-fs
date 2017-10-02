@@ -1,7 +1,7 @@
 /* globals DatArchive */
 
 const {FSNode, FSContainer} = require('./base')
-const {diffUpdate} = require('./util')
+const {diffUpdate, sortCompare} = require('./util')
 const TEXTUAL_FILE_FORMATS = require('text-extensions')
 TEXTUAL_FILE_FORMATS.push('datignore')
 
@@ -42,14 +42,16 @@ class FSArchiveContainer extends FSContainer {
       return new FSArchiveFile(this._archiveInfo, this._archive, fileInfo.name, path, fileInfo.stat)
     })
     this._files = diffUpdate(this._files, newFiles)
+  }
 
-    // sort
+  sort (column, dir) {
+    this._files.forEach(file => file.sort(column, dir))
     this._files.sort((a, b) => {
       // directories at top
       if (a.isContainer && !b.isContainer) { return -1 }
       if (!a.isContainer && b.isContainer) { return 1 }
-      // by name
-      return a.name.localeCompare(b.name)
+      // by current setting
+      return sortCompare(a, b, column, dir)
     })
   }
 

@@ -3,7 +3,7 @@
 const assert = require('assert')
 const {FSContainer} = require('./base')
 const {FSArchive} = require('./archive')
-const {diffUpdate} = require('./util')
+const {diffUpdate, sortCompare} = require('./util')
 
 class FSVirtualFolder extends FSContainer {
   constructor () {
@@ -19,7 +19,6 @@ class FSVirtualFolder extends FSContainer {
     // fetch new children and update via diff
     var newChildren = await this.readChildren()
     this._children = diffUpdate(this._children, newChildren)
-    this.sortChildren()
   }
 
   // should be overridden by subclass
@@ -27,8 +26,12 @@ class FSVirtualFolder extends FSContainer {
     return this._children
   }
 
-  sortChildren () {
-    this._children.sort((a, b) => a.name.localeCompare(b.name))
+  sort (column, dir) {
+    this._children.forEach(child => child.sort(column, dir))
+    this._children.sort((a, b) => {
+      // by current setting
+      return sortCompare(a, b, column, dir)
+    })
   }
 }
 
@@ -55,7 +58,7 @@ class FSVirtualRoot extends FSVirtualFolder {
     ]
   }
 
-  sortChildren () {
+  sort () {
     // dont sort
   }
 }
@@ -114,7 +117,7 @@ class FSVirtualFolder_Network extends FSVirtualFolder {
     }
   }
 
-  sortChildren () {
+  sort () {
     // dont sort
   }
 }

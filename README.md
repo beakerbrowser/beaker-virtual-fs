@@ -23,6 +23,9 @@ class FSNode {
   // used internally during diffs to copy state from the given node
   copyDataFrom (node) {}
 
+  // sort the items according to the given params
+  sort(column, dir) {}
+
   // mutators
   async rename (newName) {}
   async copy (newPath) {}

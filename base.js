@@ -12,8 +12,12 @@ class FSNode {
 
   // load any data needed to display the node in the sidebar or in the expanded state
   async readData () {}
+
   // used internally during diffs to copy state from the given node
   copyDataFrom (node) {}
+
+  // sort the items according to the given params
+  sort(column, dir) {}
 
   // mutators
   async rename (newName) {}

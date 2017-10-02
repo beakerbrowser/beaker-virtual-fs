@@ -18,3 +18,29 @@ exports.diffUpdate = function (oldNodes, newNodes) {
 
   return oldNodes
 }
+
+exports.sortCompare = function (nodeA, nodeB, column, dir) {
+  var res
+  switch (column) {
+    case 'updated':
+      res = nodeA.mtime < nodeB.mtime ? 1 : -1
+      break
+    case 'size':
+      if (nodeA.type !== 'folder' && nodeB.type !== 'folder') { // folders dont have sizes
+        res = nodeA.size < nodeB.size ? 1 : -1
+      }
+      break
+    case 'type':
+      res = nodeA.type.localeCompare(nodeB.type)
+      break
+  }
+
+  // fallback to alphabetical
+  if (!res) {
+    res = nodeA.name.localeCompare(nodeB.name)
+  }
+
+  // apply direction
+  if (dir === 'asc') res *= -1
+  return res
+}
