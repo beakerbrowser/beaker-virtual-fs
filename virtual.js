@@ -31,6 +31,7 @@ class FSVirtualFolder extends FSContainer {
 
 class FSVirtualRoot extends FSVirtualFolder {
   get type () { return 'root folder' }
+  get url () { return 'virtual://root' }
   get name () { return 'Root' }
 
   async readChildren () {
@@ -56,52 +57,14 @@ class FSVirtualRoot extends FSVirtualFolder {
   }
 }
 
-class FSVirtualFolderWithTypes extends FSVirtualFolder {
-  // helper to produce the child sets
-  async createTypeChildren (sourceSet) {
-    return [
-      new FSVirtualFolder_TypeFilter(sourceSet, 'All', false),
-      new FSVirtualFolder_TypeFilter(sourceSet, 'Applications', 'application'),
-      new FSVirtualFolder_TypeFilter(sourceSet, 'Code modules', 'module'),
-      new FSVirtualFolder_TypeFilter(sourceSet, 'Datasets', 'dataset'),
-      new FSVirtualFolder_TypeFilter(sourceSet, 'Documents', 'documents'),
-      new FSVirtualFolder_TypeFilter(sourceSet, 'Music', 'music'),
-      new FSVirtualFolder_TypeFilter(sourceSet, 'Photos', 'photos'),
-      new FSVirtualFolder_TypeFilter(sourceSet, 'User profiles', 'user-profile'),
-      new FSVirtualFolder_TypeFilter(sourceSet, 'Videos', 'videos'),
-      new FSVirtualFolder_TypeFilter(sourceSet, 'Websites', 'website')
-    ]
-  }
-}
-
-class FSVirtualFolder_TypeFilter extends FSVirtualFolder {
-  constructor (sourceSet, label, type) {
-    super()
-    this._sourceSet = sourceSet
-    this._label = label
-    this._type = type
-  }
-
-  get name () { return this._label }
-
-  async readChildren () {
-    if (this._type) {
-      return this._sourceSet.filter(child => (
-        child._archiveInfo.type.includes(this._type)
-      ))
-    }
-    // no filter
-    return this._sourceSet
-  }
-}
-
-class FSVirtualFolder_User extends FSVirtualFolderWithTypes {
+class FSVirtualFolder_User extends FSVirtualFolder {
   constructor (profile) {
     super()
     this._profile = profile
   }
 
   get name () { return this._profile.name || 'Anonymous' }
+  get url () { return 'virtual://user-' + this._profile._origin }
 
   async readChildren () {
     // read source set of archives
@@ -118,18 +81,17 @@ class FSVirtualFolder_User extends FSVirtualFolderWithTypes {
       let profileArchiveInfo = await profileArchive.getInfo()
       archives.unshift(profileArchiveInfo)
     }
-    const sourceSet = archives.map(a => new FSArchive(a))
-    return this.createTypeChildren(sourceSet)
+    return archives.map(a => new FSArchive(a))
   }
 }
 
-class FSVirtualFolder_Network extends FSVirtualFolderWithTypes {
+class FSVirtualFolder_Network extends FSVirtualFolder {
   get name () { return 'Network' }
+  get url () { return 'virtual://network' }
 
   async readChildren () {
     const archives = await beaker.archives.list({isSaved: true, isOwner: false})
-    const sourceSet = archives.map(a => new FSArchive(a))
-    return this.createTypeChildren(sourceSet)
+    return archives.map(a => new FSArchive(a))
   }
 
   // special helper
@@ -150,21 +112,19 @@ class FSVirtualFolder_Network extends FSVirtualFolderWithTypes {
   }
 }
 
-class FSVirtualFolder_Trash extends FSVirtualFolderWithTypes {
+class FSVirtualFolder_Trash extends FSVirtualFolder {
   get name () { return 'Trash' }
+  get url () { return 'virtual://trash' }
 
   async readChildren () {
     const archives = await beaker.archives.list({isSaved: false})
-    const sourceSet = archives.map(a => new FSArchive(a))
-    return this.createTypeChildren(sourceSet)
+    return archives.map(a => new FSArchive(a))
   }
 }
 
 module.exports = {
   FSVirtualRoot,
   FSVirtualFolder,
-  FSVirtualFolderWithTypes,
-  FSVirtualFolder_TypeFilter,
   FSVirtualFolder_User,
   FSVirtualFolder_Network,
   FSVirtualFolder_Trash

@@ -37,8 +37,6 @@ const {
 
   FSVirtualRoot, // the root of the FS
   FSVirtualFolder, // a base class for virtually-defined folders
-  FSVirtualFolderWithTypes, // a base class for virtually-defined folders that have type-filters as their children
-  FSVirtualFolder_TypeFilter, // the children of FSVirtualFolderWithTypes, applies a type filter to its parent's children
   FSVirtualFolder_User, // contains a single user's folders
   FSVirtualFolder_Network, // contains network folders
   FSVirtualFolder_Trash, // contains the local user's deleted archives
