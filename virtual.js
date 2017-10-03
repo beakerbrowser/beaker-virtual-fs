@@ -110,12 +110,10 @@ class FSVirtualFolder_Network extends FSVirtualFolder {
   // this folder has archives added arbitrarily on user access
   // so we need this method to add the archive
   addArchive (archiveInfo) {
-    // all children share a sourceSet
-    // so just add to one of them
-    const alreadyExists = !!this._children[0]._sourceSet.find(item => item._archiveInfo.url === archiveInfo.url)
+    const alreadyExists = !!this._children.find(item => item._archiveInfo.url === archiveInfo.url)
     if (!alreadyExists) {
       const archive = new FSArchive(this, archiveInfo)
-      this._children[0]._sourceSet.push(archive)
+      this._children.push(archive)
     }
   }
 
