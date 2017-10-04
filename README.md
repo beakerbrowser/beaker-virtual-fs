@@ -13,8 +13,8 @@ class FSNode {
   get mtime () { return 0 }
   get isEditable () { return false }
   get isContainer () { return false } // is folder-like?
-  get hasChildren () { return !this.isEmpty }
   get isEmpty () { return true }
+  get hasChildren () { return !this.isEmpty }
   get children () { return [] }
 
   // load any data needed to display the node in the sidebar or in the expanded state
@@ -28,8 +28,8 @@ class FSNode {
 
   // mutators
   async rename (newName) {}
-  async copy (newPath) {}
-  async move (newPath) {}
+  async copy (newPath, targetArchiveKey) {}
+  async move (newPath, targetArchiveKey) {}
   async delete () {}
 }
 ```

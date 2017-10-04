@@ -74,6 +74,19 @@ class FSArchive extends FSArchiveContainer {
   get name () { return (this._archiveInfo.title || '').trim() || 'Untitled' }
   get size () { return this._archiveInfo.size }
   get mtime () { return this._archiveInfo.mtime }
+
+  async copy (newPath, targetArchiveKey) {
+    this._archive = this._archive || new DatArchive(this._archiveInfo.key)
+    if (this._archiveInfo.key === targetArchiveKey) {
+      await this._archive.copy('/', newPath)
+    } else {
+      await DatArchive.exportToArchive({
+        src: this._archive.url,
+        dst: `dat://${targetArchiveKey}${newPath}`,
+        skipUndownloadedFiles: true
+      })
+    }
+  }
   
   async delete () {
     return DatArchive.unlink(this._archiveInfo.url)
@@ -107,12 +120,29 @@ class FSArchiveFolder extends FSArchiveContainer {
     return rename(this, newName)
   }
 
-  async copy (newPath) {
-    await this._archive.copy(this._path, newPath)
+  async copy (newPath, targetArchiveKey) {
+    if (this._archiveInfo.key === targetArchiveKey) {
+      await this._archive.copy(this._path, newPath)
+    } else {
+      await DatArchive.exportToArchive({
+        src: this._archive.url + this._path,
+        dst: `dat://${targetArchiveKey}${newPath}`,
+        skipUndownloadedFiles: true
+      })
+    }
   }
 
-  async move (newPath) {
-    await this._archive.rename(this._path, newPath)
+  async move (newPath, targetArchiveKey) {
+    if (this._archiveInfo.key === targetArchiveKey) {
+      await this._archive.rename(this._path, newPath)
+    } else {
+      await DatArchive.exportToArchive({
+        src: this._archive.url + this._path,
+        dst: `dat://${targetArchiveKey}${newPath}`,
+        skipUndownloadedFiles: true
+      })
+      await this._archive.rmdir(this._path, {recursive: true})
+    }
   }
 
   async delete () {
@@ -179,12 +209,29 @@ class FSArchiveFile extends FSNode {
     return rename(this, newName)
   }
 
-  async copy (newPath) {
-    await this._archive.copy(this._path, newPath)
+  async copy (newPath, targetArchiveKey) {
+    if (this._archiveInfo.key === targetArchiveKey) {
+      await this._archive.copy(this._path, newPath)
+    } else {
+      await DatArchive.exportToArchive({
+        src: this._archive.url + this._path,
+        dst: `dat://${targetArchiveKey}${newPath}`,
+        skipUndownloadedFiles: true
+      })
+    }
   }
 
-  async move (newPath) {
-    await this._archive.rename(this._path, newPath)
+  async move (newPath, targetArchiveKey) {
+    if (this._archiveInfo.key === targetArchiveKey) {
+      await this._archive.rename(this._path, newPath)
+    } else {
+      await DatArchive.exportToArchive({
+        src: this._archive.url + this._path,
+        dst: `dat://${targetArchiveKey}${newPath}`,
+        skipUndownloadedFiles: true
+      })
+      await this._archive.unlink(this._path)
+    }
   }
 
   async delete () {
