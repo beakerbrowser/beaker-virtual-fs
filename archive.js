@@ -76,7 +76,7 @@ class FSArchive extends FSArchiveContainer {
   get mtime () { return this._archiveInfo.mtime }
   
   async delete () {
-    return DatArchive.unlink(this._archive)
+    return DatArchive.unlink(this._archiveInfo.url)
   }
 }
 
