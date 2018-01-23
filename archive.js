@@ -169,7 +169,7 @@ class FSArchiveFile extends FSNode {
   get mtime () { return this._stat.mtime }
   get isEditable () { return this._archiveInfo.isOwner }
 
-  async readData () {
+  async readData ({maxPreviewLength} = {}) {
     if (this.preview) {
       return
     }
@@ -187,8 +187,8 @@ class FSArchiveFile extends FSNode {
     // read the file and save the first 500 bytes
     try {
       var fileData = await this._archive.readFile(this._path, 'utf8')
-      if (fileData.length > 500) {
-        fileData = fileData.slice(0, 500) + '...'
+      if (maxPreviewLength && fileData.length > maxPreviewLength) {
+        fileData = fileData.slice(0, maxPreviewLength - 3) + '...'
       }
       this.preview = fileData
     } catch (e) {
