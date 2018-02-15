@@ -38,9 +38,9 @@ class FSArchiveContainer extends FSContainer {
     var newFiles = fileInfos.map(fileInfo => {
       const path = this._path + '/' + fileInfo.name
       if (fileInfo.stat.isDirectory()) {
-        return new FSArchiveFolder(this, this._archiveInfo, this._archive, fileInfo.name, path, fileInfo.stat)
+        return new FSArchiveFolder(this, this._archive, this._archiveInfo, fileInfo.name, path, fileInfo.stat)
       }
-      return new FSArchiveFile(this, this._archiveInfo, this._archive, fileInfo.name, path, fileInfo.stat)
+      return new FSArchiveFile(this, this._archive, this._archiveInfo, fileInfo.name, path, fileInfo.stat)
     })
     this._files = diffUpdate(this._files, newFiles)
   }
@@ -94,9 +94,8 @@ class FSArchive extends FSArchiveContainer {
 }
 
 class FSArchiveFolder extends FSArchiveContainer {
-  constructor (parent, archiveInfo, archive, name, path, stat) {
-    super(parent, archiveInfo)
-    this._archive = archive
+  constructor (parent, archive, archiveInfo, name, path, stat) {
+    super(parent, archive, archiveInfo)
     this._name = name
     this._path = path
     this._stat = stat
@@ -151,11 +150,11 @@ class FSArchiveFolder extends FSArchiveContainer {
 }
 
 class FSArchiveFile extends FSNode {
-  constructor (parent, archiveInfo, archive, name, path, stat) {
+  constructor (parent, archive, archiveInfo, name, path, stat) {
     super()
     this.parent = parent
-    this._archiveInfo = archiveInfo
     this._archive = archive
+    this._archiveInfo = archiveInfo
     this._name = name
     this._path = path
     this._stat = stat
@@ -240,11 +239,11 @@ class FSArchiveFile extends FSNode {
 }
 
 class FSArchiveFolder_BeingCreated extends FSContainer {
-  constructor (parent, archiveInfo, archive, parentPath) {
+  constructor (parent, archive, archiveInfo, parentPath) {
     super()
     this.parent = parent
-    this._archiveInfo = archiveInfo
     this._archive = archive
+    this._archiveInfo = archiveInfo
     this._parentPath = parentPath
   }
 
