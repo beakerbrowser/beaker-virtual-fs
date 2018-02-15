@@ -18,11 +18,11 @@ const STANDARD_ARCHIVE_TYPES = [
 ]
 
 class FSArchiveContainer extends FSContainer {
-  constructor (parent, archiveInfo) {
+  constructor (parent, archive = null, archiveInfo = null) {
     super()
     this.parent = parent
+    this._archive = archive
     this._archiveInfo = archiveInfo
-    this._archive = null
     this._path = ''
     this._files = []
   }

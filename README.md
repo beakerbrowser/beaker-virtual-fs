@@ -54,10 +54,3 @@ const {
   FSArchiveFolder_BeingCreated // a temporary virtual folder that's in the process of having a name chosen
 } = require('beaker-virtual-fs')
 ```
-
-Currently the only two classes you'll want to instantiate directly are `FSVirtualRoot` and `FSArchive`. Here are their usages:
-
-```js
-var root = new FSVirtualRoot()
-var archive = new FSArchive(archiveInfo) // archiveInfo is provided from beaker.archives or DatArchive#getInfo()
-```
