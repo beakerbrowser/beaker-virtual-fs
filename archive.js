@@ -173,14 +173,14 @@ class FSArchiveFile extends FSNode {
       return
     }
 
-    // load a preview if this file type is (probably) textual
-    var ext = this.name.split('.').pop()
-    if (!ext) {
-      return
-    }
-    ext = ext.toLowerCase()
-    if (!TEXTUAL_FILE_FORMATS.includes(ext)) {
-      return
+    // only load a preview if this file type is (probably) textual
+    // assume textual if no extension exists
+    var nameParts = this.name.split('.')
+    if (nameParts.length > 1) {
+      let ext = nameParts.pop()
+      if (ext && TEXTUAL_FILE_FORMATS.includes(ext) === false) {
+        return
+      }
     }
 
     // read the file and save the first 500 bytes
