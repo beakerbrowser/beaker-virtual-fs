@@ -178,7 +178,7 @@ class FSArchiveFile extends FSNode {
     var nameParts = this.name.split('.')
     if (nameParts.length > 1) {
       let ext = nameParts.pop()
-      if (ext && TEXTUAL_FILE_FORMATS.includes(ext) === false) {
+      if (ext && TEXTUAL_FILE_FORMATS.includes(ext.toLowerCase()) === false) {
         return
       }
     }
