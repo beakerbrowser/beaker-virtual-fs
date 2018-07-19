@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/beakerbrowser/beaker-virtual-fs#readme",
   "dependencies": {
-    "text-extensions": "^1.6.0"
+    "binary-extensions": "^1.11.0"
   }
 }

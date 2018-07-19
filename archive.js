@@ -2,8 +2,7 @@
 
 const {FSNode, FSContainer} = require('./base')
 const {diffUpdate, sortCompare} = require('./util')
-const TEXTUAL_FILE_FORMATS = require('text-extensions')
-TEXTUAL_FILE_FORMATS.push('datignore')
+const BINARY_FILE_FORMATS = require('binary-extensions')
 
 const STANDARD_ARCHIVE_TYPES = [
   'application',
@@ -178,7 +177,7 @@ class FSArchiveFile extends FSNode {
     var nameParts = this.name.split('.')
     if (nameParts.length > 1) {
       let ext = nameParts.pop()
-      if (ext && TEXTUAL_FILE_FORMATS.includes(ext.toLowerCase()) === false) {
+      if (ext && BINARY_FILE_FORMATS.includes(ext.toLowerCase()) === true) {
         return
       }
     }
