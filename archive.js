@@ -167,8 +167,8 @@ class FSArchiveFile extends FSNode {
   get mtime () { return this._stat.mtime }
   get isEditable () { return this._archiveInfo.isOwner }
 
-  async readData ({maxPreviewLength} = {}) {
-    if (this.preview) {
+  async readData ({ignoreCache, maxPreviewLength} = {}) {
+    if (this.preview && !ignoreCache) {
       return
     }
 
