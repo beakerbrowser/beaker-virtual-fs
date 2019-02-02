@@ -63,7 +63,7 @@ class FSArchiveContainer extends FSContainer {
 }
 
 class FSArchive extends FSArchiveContainer {
-  get url () { return this._archiveInfo.url }
+  get url () { return this._archive.url }
   get type () {
     let type = this._archiveInfo && this._archiveInfo.type
     if (!type || !type.length) return 'archive'
@@ -100,7 +100,7 @@ class FSArchiveFolder extends FSArchiveContainer {
     this._stat = stat
   }
 
-  get url () { return this._archiveInfo.url + this._path }
+  get url () { return this._archive.url + this._path }
   get type () { return 'folder' }
   get name () { return (this._name || '').trim() || 'Untitled' }
   get size () { return this._stat.size }
@@ -160,7 +160,7 @@ class FSArchiveFile extends FSNode {
     this.preview = null
   }
 
-  get url () { return this._archiveInfo.url + this._path }
+  get url () { return this._archive.url + this._path }
   get type () { return 'file' }
   get name () { return (this._name || '').trim() || 'Untitled' }
   get size () { return this._stat.size }
@@ -246,7 +246,7 @@ class FSArchiveFolder_BeingCreated extends FSContainer {
     this._parentPath = parentPath
   }
 
-  get url () { return this._archiveInfo.url + this._parentPath }
+  get url () { return this._archive.url + this._parentPath }
   get type () { return 'folder' }
   get name () { return 'New folder' }
   get size () { return 0 }
