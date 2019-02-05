@@ -60,6 +60,14 @@ class FSArchiveContainer extends FSContainer {
     this._archive = node._archive
     this._path = node._path
   }
+
+  newFolder () {
+    this._files.push(new FSArchiveFolder_BeingCreated(this, this._archive, this._archiveInfo, this._path))
+  }
+
+  newFile () {
+    this._files.push(new FSArchiveFile_BeingCreated(this, this._archive, this._archiveInfo, this._path))
+  }
 }
 
 class FSArchive extends FSArchiveContainer {
@@ -261,8 +269,37 @@ class FSArchiveFolder_BeingCreated extends FSContainer {
     this._parentPath = node._parentPath
   }
 
-  async rename (newName) {
-    return this._archive.mkdir(this._parentPath + '/' + newName)
+  getPathForName (newName) {
+    return this._parentPath + '/' + newName
+  }
+}
+
+class FSArchiveFile_BeingCreated extends FSContainer {
+  constructor (parent, archive, archiveInfo, parentPath) {
+    super()
+    this.parent = parent
+    this._archive = archive
+    this._archiveInfo = archiveInfo
+    this._parentPath = parentPath
+  }
+
+  get url () { return this._archive.url + this._parentPath }
+  get type () { return 'file' }
+  get name () { return 'New file' }
+  get size () { return 0 }
+  get mtime () { return 0 }
+  get isEmpty () { return true }
+  get children () { return [] }
+  get isEditable () { return true }
+
+  copyDataFrom (node) {
+    this._archiveInfo = node._archiveInfo
+    this._archive = node._archive
+    this._parentPath = node._parentPath
+  }
+
+  getPathForName (newName) {
+    return this._parentPath + '/' + newName
   }
 }
 
@@ -272,4 +309,11 @@ async function rename (node, newName) {
   await node._archive.rename(oldpath, newpath)
 }
 
-module.exports = {FSArchiveContainer, FSArchive, FSArchiveFolder, FSArchiveFile, FSArchiveFolder_BeingCreated}
+module.exports = {
+  FSArchiveContainer,
+  FSArchive,
+  FSArchiveFolder,
+  FSArchiveFile,
+  FSArchiveFolder_BeingCreated,
+  FSArchiveFile_BeingCreated
+}

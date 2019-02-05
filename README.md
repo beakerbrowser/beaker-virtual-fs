@@ -41,16 +41,14 @@ const {
   FSNode, // root interface for all objects, should be subclassed
   FSContainer, // root interface for all folder-like objects, should be subclassed
 
-  FSVirtualRoot, // the root of the FS
-  FSVirtualFolder, // a base class for virtually-defined folders
-  FSVirtualFolder_User, // contains a single user's folders
-  FSVirtualFolder_Network, // contains network folders
-  FSVirtualFolder_Trash, // contains the local user's deleted archives
+  FSVirtualFolder, // subclassable virtual folder
+  FSVirtualItem, // subclassable virtual item
   
   FSArchiveContainer, // root interface for all folder-like archive objects, should be subclassed
   FSArchive, // an archive
   FSArchiveFolder, // a folder within an archive
   FSArchiveFile, // a file within an archive
-  FSArchiveFolder_BeingCreated // a temporary virtual folder that's in the process of having a name chosen
+  FSArchiveFolder_BeingCreated, // a temporary virtual folder that's in the process of having a name chosen
+  FSArchiveFile_BeingCreated // a temporary virtual file that's in the process of having a name chosen
 } = require('beaker-virtual-fs')
 ```
