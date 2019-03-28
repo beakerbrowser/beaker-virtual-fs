@@ -165,7 +165,7 @@ class FSArchiveFile extends FSNode {
     this._name = name
     this._path = path
     this._stat = stat
-    this.preview = null
+    this.fileData = null
   }
 
   get url () { return this._archive.url + this._path }
@@ -175,12 +175,17 @@ class FSArchiveFile extends FSNode {
   get mtime () { return this._stat.mtime }
   get isEditable () { return this._archiveInfo.isOwner }
 
-  async readData ({ignoreCache, maxPreviewLength} = {}) {
-    if (this.preview && !ignoreCache) {
+  get preivew () { return this.fileData } // compat with old api
+
+  async readData ({ignoreCache, maxLength, maxPreviewLength, timeout} = {}) {
+    if (this.fileData && !ignoreCache) {
       return
     }
+    if (maxPreviewLength && !maxLength) {
+      maxLength = maxPreviewLength // compat with old api
+    }
 
-    // only load a preview if this file type is (probably) textual
+    // only load a fileData if this file type is (probably) textual
     // assume textual if no extension exists
     var nameParts = this.name.split('.')
     if (nameParts.length > 1) {
@@ -190,16 +195,12 @@ class FSArchiveFile extends FSNode {
       }
     }
 
-    // read the file and save the first 500 bytes
-    try {
-      var fileData = await this._archive.readFile(this._path, 'utf8')
-      if (maxPreviewLength && fileData.length > maxPreviewLength) {
-        fileData = fileData.slice(0, maxPreviewLength - 3) + '...'
-      }
-      this.preview = fileData
-    } catch (e) {
-      console.log('Failed to load preview', e, this)
+    // read the file
+    var fileData = await this._archive.readFile(this._path, {encoding: 'utf8', timeout})
+    if (maxLength && fileData.length > maxLength) {
+      fileData = fileData.slice(0, maxLength - 3) + '...'
     }
+    this.fileData = fileData
   }
 
   copyDataFrom (node) {
@@ -208,7 +209,7 @@ class FSArchiveFile extends FSNode {
     this._name = node._name
     this._path = node._path
     this._stat = node._stat
-    this.preview = node.preview || this.preview // preview may not be loaded yet so fallback to current
+    this.fileData = node.fileData || this.fileData // fileData may not be loaded yet so fallback to current
   }
 
   async rename (newName) {
